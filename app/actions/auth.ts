@@ -79,7 +79,7 @@ export async function loginUser(formData: unknown) {
     };
   }
 
-  // Generate JWT payload containing user ID, role, and name
+  // Generate JWT payload containing user ID and role
   const token = signToken({ id: user.id, role: user.role });
 
   // Store JWT in HTTP-only cookie
@@ -92,10 +92,8 @@ export async function loginUser(formData: unknown) {
     maxAge: 7 * 24 * 60 * 60, // 7 days
   });
 
-  return {
-    success: true,
-    message: "Login successful.",
-  };
+  // Perform server-side redirect immediately after setting the cookie
+  redirect("/dashboard");
 }
 
 export async function logoutUser() {

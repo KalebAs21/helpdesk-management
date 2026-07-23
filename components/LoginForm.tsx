@@ -3,12 +3,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, LoginInput } from "../lib/validations";
-import { loginUser } from "@/actions/auth";
-import { useRouter } from "next/navigation";
+import { loginUser } from "../app/actions/auth";
 import { useState } from "react";
 
 export default function LoginForm() {
-    const router = useRouter();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const {
@@ -21,12 +19,12 @@ export default function LoginForm() {
 
     async function onSubmit(data: LoginInput) {
         setErrorMessage(null);
+
+        // When login succeeds, loginUser handles redirect on the server.
+        // Code only reaches below if an error object is returned instead of redirecting.
         const result = await loginUser(data);
 
-        if (result.success) {
-            router.push("/dashboard");
-            router.refresh();
-        } else {
+        if (result && !result.success) {
             setErrorMessage(result.message ?? "Login failed.");
         }
     }

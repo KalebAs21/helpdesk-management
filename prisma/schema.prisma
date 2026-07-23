@@ -35,17 +35,24 @@ enum Category {
   OTHER
 }
 
+enum ActivityType {
+  CREATED
+  ASSIGNED
+  STATUS_CHANGED
+  PRIORITY_CHANGED
+}
+
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String
+  role     Role
 
-  createdTickets  Ticket[] @relation("TicketCreator")
-  assignedTickets Ticket[] @relation("TicketAssignee")
-
-  comments Comment[]
+  createdTickets  Ticket[]   @relation("TicketCreator")
+  assignedTickets Ticket[]   @relation("TicketAssignee")
+  comments        Comment[]
+  activities      Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -63,18 +70,32 @@ model Ticket {
   createdById  String
   assignedToId String?
 
-  createdBy User @relation("TicketCreator", fields: [createdById], references: [id])
-  assignedTo User? @relation("TicketAssignee", fields: [assignedToId], references: [id])
-
-  comments Comment[]
+  createdBy  User       @relation("TicketCreator", fields: [createdById], references: [id])
+  assignedTo User?      @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  comments   Comment[]
+  activities Activity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Comment {
-  id       String @id @default(cuid())
-  content  String
+  id      String @id @default(cuid())
+  content String
+
+  ticketId String
+  userId   String
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Activity {
+  id     String       @id @default(cuid())
+  type   ActivityType
+  detail String
 
   ticketId String
   userId   String
