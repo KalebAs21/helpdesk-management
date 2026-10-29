@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function registerUser(formData: unknown) {
+
   const result = registerSchema.safeParse(formData);
 
   if (!result.success) {

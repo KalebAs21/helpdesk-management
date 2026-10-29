@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { logoutUser } from "../app/actions/auth";
 import { SessionUser } from "@/../lib/session";
+import Image from "next/image";
 
 const ROLE_BADGE_STYLE: Record<SessionUser["role"], { label: string; style: string }> = {
   MANAGER: { label: "Manager", style: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-purple-200" },
@@ -23,11 +24,16 @@ export default function NavBar({ user }: { user: SessionUser }) {
         {/* Left Section: Logo & Nav Links */}
         <div className="flex items-center gap-8">
           <Link href="/dashboard" className="flex items-center gap-2.5 group">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-blue-600 text-white font-bold shadow-md shadow-indigo-500/20 group-hover:scale-105 transition-transform">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            </div>
+             <div className="mx-auto flex h-18 w-58 items-center justify-center">
+                              <Image
+                                  src="/dcmme-logo.png"
+                                  alt="DCMME Logo"
+                                  width={400}
+                                  height={150}
+                                  className="h-full w-full object-contain"
+                                  priority
+                              />
+                          </div>
             <span className="font-bold text-lg text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
               DeskFlow
             </span>
