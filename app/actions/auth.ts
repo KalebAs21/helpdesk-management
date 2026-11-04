@@ -7,44 +7,10 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-export async function registerUser(formData: unknown) {
-
-  const result = registerSchema.safeParse(formData);
-
-  if (!result.success) {
-    return {
-      success: false,
-      errors: result.error.flatten().fieldErrors,
-    };
-  }
-
-  const { name, email, password, role } = result.data;
-
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
-
-  if (existingUser) {
-    return {
-      success: false,
-      message: "Email already exists.",
-    };
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      password: hashedPassword,
-      role,
-    },
-  });
-
+export async function registerUser(_formData: unknown) {
   return {
-    success: true,
-    message: "Registration successful.",
+    success: false,
+    message: "Public registration is disabled. Accounts must be provisioned by a System Administrator.",
   };
 }
 

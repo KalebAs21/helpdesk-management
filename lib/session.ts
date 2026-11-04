@@ -8,7 +8,8 @@ export type SessionUser = {
   id: string;
   name: string;
   email: string;
-  role: "EMPLOYEE" | "TECHNICAL" | "MANAGER";
+  role: "ADMIN" | "MANAGER" | "TECHNICAL" | "EMPLOYEE";
+  department?: "IT" | "ELECTRICAL" | "GENERAL" | null;
 };
 
 /**

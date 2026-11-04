@@ -125,7 +125,14 @@ export default function LoginForm() {
                   <p className="text-center text-xs font-semibold text-slate-500 mb-2.5">
                       ⚡ Quick Demo Accounts (Click to Fill):
                   </p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      <button
+                          type="button"
+                          onClick={() => fillDemo("admin@company.com")}
+                          className="rounded-lg border border-rose-200 bg-rose-50 px-2 py-1.5 text-xs font-bold text-rose-700 hover:bg-rose-100 transition-colors"
+                      >
+                          Admin
+                      </button>
                       <button
                           type="button"
                           onClick={() => fillDemo("manager1@company.com")}
@@ -150,15 +157,9 @@ export default function LoginForm() {
                   </div>
               </div>
 
-              <div className="text-center pt-2">
-                  <p className="text-xs text-slate-600">
-                      Don't have an account yet?{" "}
-                      <Link
-                          href="/register"
-                          className="font-bold text-indigo-600 hover:underline"
-                      >
-                          Register here
-                      </Link>
+              <div className="text-center pt-2 border-t border-slate-100">
+                  <p className="text-xs text-slate-500">
+                      🔒 <span className="font-semibold text-slate-700">Internal Help Desk</span> · Accounts are provisioned by an Administrator.
                   </p>
               </div>
           </form>

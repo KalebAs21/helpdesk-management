@@ -9,7 +9,7 @@ import {
 } from "../app/actions/tickets";
 import { canTransition } from "@/../lib/workflow";
 
-type Role = "MANAGER" | "TECHNICAL" | "EMPLOYEE";
+type Role = "ADMIN" | "MANAGER" | "TECHNICAL" | "EMPLOYEE";
 type Status = "OPEN" | "ASSIGNED" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
 type Priority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
@@ -64,8 +64,8 @@ export default function TicketActions({
     canTransition(role, status, next, isAssignee, isCreator)
   );
 
-  const canAssign = role === "MANAGER" && status !== "CLOSED";
-  const canChangePriority = role === "MANAGER" && status !== "CLOSED";
+  const canAssign = (role === "MANAGER" || role === "ADMIN") && status !== "CLOSED";
+  const canChangePriority = (role === "MANAGER" || role === "ADMIN") && status !== "CLOSED";
 
   if (!canAssign && !canChangePriority && possibleNextStatuses.length === 0) {
     return null;

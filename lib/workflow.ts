@@ -24,8 +24,8 @@ export function canTransition(
 ): boolean {
   if (!ALLOWED_TRANSITIONS[currentStatus].includes(nextStatus)) return false;
 
-  if (role === "MANAGER") {
-    // Managers can drive any valid transition
+  if (role === "MANAGER" || role === "ADMIN") {
+    // Admins and Managers can drive any valid transition
     return true;
   }
 

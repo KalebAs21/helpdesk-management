@@ -69,7 +69,7 @@ export async function createTicket(formData: unknown): Promise<ActionResult> {
  * Assigning moves the ticket from OPEN to ASSIGNED.
  */
 export async function assignTicket(formData: unknown): Promise<ActionResult> {
-  const manager = await requireRole(["MANAGER"]);
+  const manager = await requireRole(["MANAGER", "ADMIN"]);
 
   const result = assignTicketSchema.safeParse(formData);
   if (!result.success) {
@@ -179,7 +179,7 @@ export async function updateTicketStatus(formData: unknown): Promise<ActionResul
 export async function updateTicketPriority(
   formData: unknown
 ): Promise<ActionResult> {
-  await requireRole(["MANAGER"]);
+  await requireRole(["MANAGER", "ADMIN"]);
 
   const result = updatePrioritySchema.safeParse(formData);
   if (!result.success) {
@@ -233,6 +233,7 @@ export async function addComment(formData: unknown): Promise<ActionResult> {
   if (!ticket) return { success: false, message: "Ticket not found." };
 
   const isInvolved =
+    user.role === "ADMIN" ||
     user.role === "MANAGER" ||
     ticket.createdById === user.id ||
     ticket.assignedToId === user.id;
@@ -279,7 +280,7 @@ export async function getVisibleTickets(filters?: {
   if (filters?.status) where.status = filters.status;
   if (filters?.priority) where.priority = filters.priority;
   if (filters?.category) where.category = filters.category;
-  if (filters?.assignedTo && user.role === "MANAGER") {
+  if (filters?.assignedTo && (user.role === "MANAGER" || user.role === "ADMIN")) {
     where.assignedToId = filters.assignedTo;
   }
   if (filters?.search) {
@@ -329,6 +330,7 @@ export async function getTicketDetail(ticketId: string) {
   if (!ticket) return null;
 
   const canView =
+    user.role === "ADMIN" ||
     user.role === "MANAGER" ||
     ticket.createdById === user.id ||
     ticket.assignedToId === user.id;
@@ -354,6 +356,40 @@ export async function getTechnicians() {
  */
 export async function getDashboardStats() {
   const user = await requireUser();
+
+  if (user.role === "ADMIN") {
+    const [total, byStatus, byPriority, totalUsers, technicians, departments] = await Promise.all([
+      prisma.ticket.count(),
+      prisma.ticket.groupBy({ by: ["status"], _count: true }),
+      prisma.ticket.groupBy({ by: ["priority"], _count: true }),
+      prisma.user.count(),
+      prisma.user.findMany({
+        where: { role: "TECHNICAL" },
+        select: { id: true, name: true },
+      }),
+      prisma.user.groupBy({ by: ["role"], _count: true }),
+    ]);
+
+    const workload = await prisma.ticket.groupBy({
+      by: ["assignedToId"],
+      where: { status: { notIn: ["CLOSED"] }, assignedToId: { not: null } },
+      _count: true,
+    });
+
+    return {
+      role: "ADMIN" as const,
+      total,
+      totalUsers,
+      byStatus,
+      byPriority,
+      userRoleCounts: departments,
+      technicians: technicians.map((t) => ({
+        id: t.id,
+        name: t.name,
+        openCount: workload.find((w) => w.assignedToId === t.id)?._count ?? 0,
+      })),
+    };
+  }
 
   if (user.role === "MANAGER") {
     const [total, byStatus, byPriority, technicians] = await Promise.all([

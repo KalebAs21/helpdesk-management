@@ -15,6 +15,17 @@ async function main() {
 
   console.log("Creating preseeded users...");
 
+  // 1 System Administrator
+  const admin = await prisma.user.create({
+    data: {
+      name: "System Administrator",
+      email: "admin@company.com",
+      password: hashedPassword,
+      role: Role.ADMIN,
+      department: null,
+    },
+  });
+
   // 2 Managers
   const manager1 = await prisma.user.create({
     data: {

@@ -29,7 +29,7 @@ export default async function TicketsPage({
 
   const [tickets, technicians] = await Promise.all([
     getVisibleTickets(params),
-    user.role === "MANAGER" ? getTechnicians() : Promise.resolve([]),
+    user.role === "MANAGER" || user.role === "ADMIN" ? getTechnicians() : Promise.resolve([]),
   ]);
 
   return (
@@ -41,7 +41,7 @@ export default async function TicketsPage({
         <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">
-              {user.role === "MANAGER" ? "All System Tickets" : user.role === "TECHNICAL" ? "Assigned Technical Tickets" : "My Support Tickets"}
+              {user.role === "ADMIN" ? "All System Tickets (Admin Overview)" : user.role === "MANAGER" ? "Department Tickets" : user.role === "TECHNICAL" ? "Assigned Technical Tickets" : "My Support Tickets"}
             </h1>
             <p className="text-sm text-slate-600 mt-1">
               Showing {tickets.length} {tickets.length === 1 ? "ticket" : "tickets"} based on active filters
@@ -61,7 +61,7 @@ export default async function TicketsPage({
         {/* Filter Toolbar */}
         <Suspense fallback={null}>
           <TicketFilters
-            showAssignedTo={user.role === "MANAGER"}
+            showAssignedTo={user.role === "MANAGER" || user.role === "ADMIN"}
             technicians={technicians}
           />
         </Suspense>

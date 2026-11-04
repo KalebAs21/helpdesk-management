@@ -4,6 +4,7 @@ import { SessionUser } from "@/../lib/session";
 import Image from "next/image";
 
 const ROLE_BADGE_STYLE: Record<SessionUser["role"], { label: string; style: string }> = {
+  ADMIN: { label: "Admin", style: "bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300 border-rose-200" },
   MANAGER: { label: "Manager", style: "bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300 border-purple-200" },
   TECHNICAL: { label: "Tech Staff", style: "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200" },
   EMPLOYEE: { label: "Employee", style: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200" },
@@ -13,7 +14,7 @@ export default function NavBar({ user }: { user: SessionUser }) {
   const roleConfig = ROLE_BADGE_STYLE[user.role] ?? { label: user.role, style: "bg-slate-100 text-slate-700" };
   const initials = user.name
     .split(" ")
-    .map((n) => n[0])
+    .map((n: string) => n[0])
     .join("")
     .substring(0, 2)
     .toUpperCase();
@@ -61,6 +62,18 @@ export default function NavBar({ user }: { user: SessionUser }) {
               </svg>
               New Ticket
             </Link>
+
+            {user.role === "ADMIN" && (
+              <Link
+                href="/admin/users"
+                className="rounded-lg px-3 py-1.5 text-sm font-semibold text-rose-700 bg-rose-50 hover:bg-rose-100 transition-all flex items-center gap-1.5"
+              >
+                <svg className="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                User Management
+              </Link>
+            )}
           </nav>
         </div>
 

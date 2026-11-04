@@ -1,10 +1,23 @@
 import { z } from "zod";
 
+export const userRoleEnum = z.enum(["ADMIN", "MANAGER", "TECHNICAL", "EMPLOYEE"]);
+export const departmentEnum = z.enum(["IT", "ELECTRICAL", "GENERAL"]);
+
+export const createUserSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  role: userRoleEnum,
+  department: departmentEnum.optional().nullable(),
+});
+
+export type CreateUserInput = z.infer<typeof createUserSchema>;
+
 export const registerSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  role: z.enum(["EMPLOYEE", "TECHNICAL", "MANAGER"]),
+  role: userRoleEnum,
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

@@ -51,7 +51,8 @@ export default async function TicketDetailPage({
   const ticket = await getTicketDetail(id);
   if (!ticket) notFound();
 
-  const technicians = user.role === "MANAGER" ? await getTechnicians() : [];
+  const technicians =
+    user.role === "MANAGER" || user.role === "ADMIN" ? await getTechnicians() : [];
 
   const activities: ActivityItem[] = ticket.activities ?? [];
   const comments: CommentItem[] = ticket.comments ?? [];
@@ -77,7 +78,8 @@ export default async function TicketDetailPage({
 
   const isAssignee = ticket.assignedToId === user.id;
   const isCreator = ticket.createdById === user.id;
-  const isInvolved = user.role === "MANAGER" || isAssignee || isCreator;
+  const isInvolved =
+    user.role === "ADMIN" || user.role === "MANAGER" || isAssignee || isCreator;
 
   const currentStepIndex = STEPS.indexOf(ticket.status);
 

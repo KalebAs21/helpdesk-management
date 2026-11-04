@@ -21,8 +21,12 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Protect dashboard & tickets routes
-  if (pathname.startsWith("/dashboard") || pathname.startsWith("/tickets")) {
+  // Protect dashboard, tickets, and admin routes
+  if (
+    pathname.startsWith("/dashboard") ||
+    pathname.startsWith("/tickets") ||
+    pathname.startsWith("/admin")
+  ) {
     if (!isValidToken) {
       const response = NextResponse.redirect(new URL("/login", request.url));
       response.cookies.delete("token");
@@ -41,5 +45,13 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/tickets", "/tickets/:path*", "/login", "/register"],
+  matcher: [
+    "/dashboard/:path*",
+    "/tickets",
+    "/tickets/:path*",
+    "/admin",
+    "/admin/:path*",
+    "/login",
+    "/register",
+  ],
 };

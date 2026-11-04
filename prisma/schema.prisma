@@ -8,9 +8,16 @@ datasource db {
 }
 
 enum Role {
-  EMPLOYEE
-  TECHNICAL
+  ADMIN
   MANAGER
+  TECHNICAL
+  EMPLOYEE
+}
+
+enum Department {
+  IT
+  ELECTRICAL
+  GENERAL
 }
 
 enum TicketStatus {
@@ -30,6 +37,7 @@ enum Priority {
 
 enum Category {
   IT_SUPPORT
+  ELECTRICAL_SUPPORT
   FACILITIES
   HR
   OTHER
@@ -48,6 +56,7 @@ model User {
   email    String @unique
   password String
   role     Role
+  department Department? @default(IT)
 
   createdTickets  Ticket[]   @relation("TicketCreator")
   assignedTickets Ticket[]   @relation("TicketAssignee")
@@ -66,6 +75,7 @@ model Ticket {
   category     Category
   priority     Priority
   status       TicketStatus @default(OPEN)
+  department   Department?  @default(IT)
 
   createdById  String
   assignedToId String?
